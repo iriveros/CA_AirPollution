@@ -1,6 +1,6 @@
 if(!require(shiny)) install.packages("shiny") 
 if(!require(shinythemes)) install.packages("shinythemes") 
-if(!require(DT)) install.packages("DT")
+if(!require(DT)) devtools::install_github('rstudio/DT')
 if(!require(ggplot2)) install.packages("ggplot2")
 if(!require(dplyr)) install.packages("dplyr")
 if(!require(shinycssloaders)) install.packages("shinycssloaders")
@@ -9,7 +9,6 @@ if(!require(thematic)) install.packages("thematic")
 if(!require(hash)) install.packages("hash")
 if(!require(sp)) install.packages("sp")
 if(!require(tools)) install.packages("tools")
-if(!require(crosstalk)) install.packages("crosstalk")
 
 lastUpdate <- "None"
 last_interacted <- list(NULL, "None")
