@@ -1,4 +1,4 @@
-source("global.R")
+source("global.R", local = TRUE)
 
 get_county_verts <- function(m, s)
 {
@@ -52,9 +52,15 @@ inputEventHandlerGG <- function(mySearch, myName, myCol, filterDF, session)
   return(filterDF)
 }
 
-initialize_load_data <- function (session, air_pollution)
+initialize_load_data <- function (air_pollution)
 {
-  air_pollution <- read.csv("AMBIENT_MONITORING_ARCHIVE_OUTPUT.csv")
+  file.list <- vector()
+  for(i in 0:21)
+  {
+    file.list <- c(file.list, paste(getwd(),"/AMBIENT_MONITORING_ARICHIVE_FILES/AMBIENT_MONITORING_ARCHIVE_OUTPUT_", i, ".csv", sep =""))
+  }
+  print(file.list)
+  air_pollution<-do.call(rbind, lapply(file.list, function(x){read.csv(x,FALSE); }))
   colnames(air_pollution) <- c("STATE_ABBR", "AMA_SITE_CODE", "AQS_POC", "PROGRAM", "YEAR", "QUARTER", "SAMPLE_DATE", "SAMPLE_START_TIME", "AQS_PARAMETER_CODE", 
                              "AQS_PARAMETER_NAME", "DATA_SOURCE", "DURATION_DESC", "SAMPLE_VALUE_REPORTED", "AQS_UNIT_CODE", "UNIT_DESC ", "SAMPLING_FREQUENCY_CODE",
                              "COMMENT", "SAMPLE_VALUE_STD", "SAMPLE_VALUE_STD_FINAL_UG_M3", "SAMPLE_VALUE_STD_FINAL_TYPE", "AQS_PARAMETER_CODE_FINAL", 
@@ -83,7 +89,7 @@ server <- function(input, output, session)
     progress <- Progress$new(session)
     progress$set(value = 0, message = 'Loading large dataset...')
     progress$inc(amount = 0.2, message = 'Loading large dataset...')
-    air_pollution <- initialize_load_data(session, air_pollution)
+    air_pollution <- initialize_load_data(air_pollution)
     progress$inc(amount = 0.7, message = 'Making parameters...')
     air_pollution <- air_pollution %>% mutate(COUNTY = NA, AMA_SITE_CODE = as.character(AMA_SITE_CODE))
     #print(head(air_pollution))
@@ -438,7 +444,7 @@ server <- function(input, output, session)
           {
             newDF <- select(active_filterDF(), c("AMA_SITE_CODE", "PROGRAM", "YEAR", "SAMPLE_DATE", "SAMPLE_START_TIME", "AQS_PARAMETER_NAME",
                                              "SAMPLE_VALUE_STD", "SAMPLE_COLLECTION_DESC", "SAMPLE_ANALYSIS_DESC", "MONITOR_LATITUDE", 
-                                             "MONITOR_LONGITUDE", "COUNTY")) %>% filter(MONITOR_LATITUDE == siteDF$MONITOR_LATITUDE & MONITOR_LONGITUDE == siteDF$MONITOR_LONGITUDE)
+                                             "MONITOR_LONGITUDE")) %>% filter(MONITOR_LATITUDE == siteDF$MONITOR_LATITUDE & MONITOR_LONGITUDE == siteDF$MONITOR_LONGITUDE)
             if(input$select_action == "Replace")
             {
               SelectedSitesDF(newDF)
@@ -458,7 +464,7 @@ server <- function(input, output, session)
         {
           newDF <- select(active_filterDF(), c("AMA_SITE_CODE", "PROGRAM", "YEAR", "SAMPLE_DATE", "SAMPLE_START_TIME", "AQS_PARAMETER_NAME",
                                                "SAMPLE_VALUE_STD", "SAMPLE_COLLECTION_DESC", "SAMPLE_ANALYSIS_DESC", "MONITOR_LATITUDE", 
-                                               "MONITOR_LONGITUDE", "COUNTY")) %>% filter(MONITOR_LATITUDE == siteDF$MONITOR_LATITUDE & MONITOR_LONGITUDE == siteDF$MONITOR_LONGITUDE)
+                                               "MONITOR_LONGITUDE")) %>% filter(MONITOR_LATITUDE == siteDF$MONITOR_LATITUDE & MONITOR_LONGITUDE == siteDF$MONITOR_LONGITUDE)
           #print(newDF)
           if(input$select_action == "Replace")
           {
@@ -511,7 +517,7 @@ server <- function(input, output, session)
         {
           newDF <- select(active_filterDF(), c("AMA_SITE_CODE", "PROGRAM", "YEAR", "SAMPLE_DATE", "SAMPLE_START_TIME", "AQS_PARAMETER_NAME",
                                            "SAMPLE_VALUE_STD", "SAMPLE_COLLECTION_DESC", "SAMPLE_ANALYSIS_DESC", "MONITOR_LATITUDE", 
-                                           "MONITOR_LONGITUDE", "COUNTY")) %>% filter(MONITOR_LATITUDE == siteDF$MONITOR_LATITUDE & MONITOR_LONGITUDE == siteDF$MONITOR_LONGITUDE)
+                                           "MONITOR_LONGITUDE")) %>% filter(MONITOR_LATITUDE == siteDF$MONITOR_LATITUDE & MONITOR_LONGITUDE == siteDF$MONITOR_LONGITUDE)
           #print(newDF)
           if(input$select_action == "Replace")
           {
@@ -1056,4 +1062,4 @@ server <- function(input, output, session)
   })
 }
 #thematic_shiny()
-shinyApp(ui = ui, server = server)
+#shinyApp(ui = ui, server = server)
