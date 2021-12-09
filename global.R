@@ -9,6 +9,7 @@ if(!require(thematic)) install.packages("thematic")
 if(!require(hash)) install.packages("hash")
 if(!require(sp)) install.packages("sp")
 if(!require(tools)) install.packages("tools")
+if(!require(crosstalk)) install.packages("crosstalk")
 
 lastUpdate <- "None"
 last_interacted <- list(NULL, "None")
